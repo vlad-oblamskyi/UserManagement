@@ -96,12 +96,10 @@ func (t *UserManagement) Query(stub shim.ChaincodeStubInterface, function string
 		if (userDetails.Password != string(args[2])) {
 			return nil, errors.New("BIC code or login or password you entered is incorrect.");
 		}
-		jsonUserKey, _ := json.Marshal(userKey)
 		token := b64.StdEncoding.EncodeToString(jsonUserKey)
 
 		authToken := &Response {
 			Status: "OK",
-			Message: nil,
 			AuthToken: token,
 		}
 		return json.Marshal(authToken)
