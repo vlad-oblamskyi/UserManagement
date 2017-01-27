@@ -64,7 +64,8 @@ func (t *UserManagement) Invoke(stub shim.ChaincodeStubInterface, function strin
 
 		state, _ := stub.GetState(KVS_HANLDER_KEY)
 		mapId := string(state);
-		invokeArgs := util.ToChaincodeArgs("put", json.Marshal(userKey), string(userDetails))
+		jsonUserKey, _ := json.Marshal(userKey)
+		invokeArgs := util.ToChaincodeArgs("put", string(jsonUserKey), string(userDetails))
 
 		stub.InvokeChaincode(mapId, invokeArgs)
 		return nil, nil
@@ -83,7 +84,8 @@ func (t *UserManagement) Query(stub shim.ChaincodeStubInterface, function string
 		userKey := &UserKey{ BIC: args[0], Login: args[1] }
 		state, _ := stub.GetState(KVS_HANLDER_KEY)
 		mapId := string(state);
-		queryArgs := util.ToChaincodeArgs("function", json.Marshal(userKey))
+		jsonUserKey, _ := json.Marshal(userKey)
+		queryArgs := util.ToChaincodeArgs("function", string(jsonUserKey))
 
 		queryResult, _ := stub.QueryChaincode(mapId, queryArgs)
 		var userDetails UserDetails
@@ -94,7 +96,8 @@ func (t *UserManagement) Query(stub shim.ChaincodeStubInterface, function string
 		if (userDetails.Password != string(args[2])) {
 			return nil, errors.New("BIC code or login or password you entered is incorrect.");
 		}
-		token := b64.StdEncoding.EncodeToString([]byte(json.Marshal(userKey)))
+		jsonUserKey, _ := json.Marshal(userKey)
+		token := b64.StdEncoding.EncodeToString(jsonUserKey)
 
 		authToken := &Response {
 			Status: "OK",
